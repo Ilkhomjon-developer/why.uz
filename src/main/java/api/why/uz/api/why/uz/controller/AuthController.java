@@ -1,5 +1,6 @@
 package api.why.uz.api.why.uz.controller;
 
+import api.why.uz.api.why.uz.dto.AppResponseDTO;
 import api.why.uz.api.why.uz.dto.AuthDTO;
 import api.why.uz.api.why.uz.dto.ProfileDTO;
 import api.why.uz.api.why.uz.dto.RegistrationDTO;
@@ -18,7 +19,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/registration")
-    public ResponseEntity<String> registration(@Valid @RequestBody RegistrationDTO dto ) {
+    public ResponseEntity<AppResponseDTO<String>> registration(@Valid @RequestBody RegistrationDTO dto ) {
 
         return ResponseEntity.ok(authService.registration(dto));
     }

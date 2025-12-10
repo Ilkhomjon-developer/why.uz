@@ -1,5 +1,6 @@
 package api.why.uz.api.why.uz.service;
 
+import api.why.uz.api.why.uz.dto.AppResponseDTO;
 import api.why.uz.api.why.uz.dto.AuthDTO;
 import api.why.uz.api.why.uz.dto.ProfileDTO;
 import api.why.uz.api.why.uz.dto.RegistrationDTO;
@@ -39,7 +40,7 @@ public class AuthService {
     private EmailSendingService emailSendingService;
 
 
-    public String registration(RegistrationDTO dto) {
+    public AppResponseDTO<String> registration(RegistrationDTO dto) {
 
        Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
 
@@ -69,9 +70,10 @@ public class AuthService {
        profileRoleService.create(entity.getId(), ProfileRole.ROLE_USER);
 
         emailSendingService.sendRegistrationEmail(dto.username(), entity.getId());
-       return "Successfully registered";
+       return new AppResponseDTO<>("Successfully registered");
 
     }
+
 
     public String regVerification(String token) {
 

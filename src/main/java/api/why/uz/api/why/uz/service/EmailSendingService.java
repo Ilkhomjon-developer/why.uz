@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class EmailSendingService {
@@ -83,6 +86,7 @@ public class EmailSendingService {
         sendEmail(email, "Registration confirmation", body);
     }
 
+    @Async("emailExecutor")
     public void sendEmail(String email, String subject, String body){
 
         MimeMessage msg = javaMailSender.createMimeMessage();
@@ -93,11 +97,14 @@ public class EmailSendingService {
             helper.setTo(email);
             helper.setSubject(subject);
             helper.setText(body, true);
-            javaMailSender.send(msg);
+
+            CompletableFuture.runAsync(() -> javaMailSender.send(msg)); // email sent through thread
 
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
+
+    }
 
 
 //         Simple mail sender
@@ -107,6 +114,4 @@ public class EmailSendingService {
 //        msg.setSubject(subject);
 //        msg.setText(body);
 //        javaMailSender.send(msg);
-
-    }
 }

@@ -3,6 +3,7 @@ package api.why.uz.api.why.uz.config;
 import api.why.uz.api.why.uz.entity.ProfileEntity;
 import api.why.uz.api.why.uz.enums.GeneralStatus;
 import api.why.uz.api.why.uz.enums.ProfileRole;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +13,10 @@ import java.util.List;
 
 public class CustomUserDetails implements UserDetails {
 
+    @Getter
     private Integer id;
+
+    @Getter
     private String name;
     private String username;
     private String password;
