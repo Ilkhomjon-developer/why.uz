@@ -1,6 +1,7 @@
 ### Registration
 POST localhost:8080/auth/registration
 Content-Type: application/json
+Accept-Language: UZ
 
 {
   "name": "Akromjonnn255",
@@ -10,10 +11,12 @@ Content-Type: application/json
 
 ### Registration Verification
 GET http://localhost:8080/auth/registration/verification/{profileId}
+Accept-Language: UZ
 
 ### Login
 POST localhost:8080/auth/login
 Content-Type: application/json
+Accept-Language: UZ
 
 {
   "username": "maxamadqulovilkhomjon@gmail.com",

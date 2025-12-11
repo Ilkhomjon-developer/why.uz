@@ -5,6 +5,7 @@ import api.why.uz.api.why.uz.dto.AuthDTO;
 import api.why.uz.api.why.uz.dto.ProfileDTO;
 import api.why.uz.api.why.uz.dto.RegistrationDTO;
 import api.why.uz.api.why.uz.entity.ProfileEntity;
+import api.why.uz.api.why.uz.enums.AppLanguage;
 import api.why.uz.api.why.uz.enums.GeneralStatus;
 import api.why.uz.api.why.uz.enums.ProfileRole;
 import api.why.uz.api.why.uz.exps.AppBadException;
@@ -13,6 +14,7 @@ import api.why.uz.api.why.uz.repository.ProfileRoleRepository;
 import api.why.uz.api.why.uz.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,8 +41,11 @@ public class AuthService {
     @Autowired
     private EmailSendingService emailSendingService;
 
+    @Autowired
+    private ResourceBundleService resourceService;
 
-    public AppResponseDTO<String> registration(RegistrationDTO dto) {
+
+    public AppResponseDTO<String> registration(RegistrationDTO dto, AppLanguage lang) {
 
        Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
 
@@ -54,7 +59,7 @@ public class AuthService {
 
            }else {
 
-               throw new AppBadException("User already exists");
+               throw new AppBadException(resourceService.getMessage("email.phone.exists", lang));
            }
        }
 
@@ -70,46 +75,46 @@ public class AuthService {
        profileRoleService.create(entity.getId(), ProfileRole.ROLE_USER);
 
         emailSendingService.sendRegistrationEmail(dto.username(), entity.getId());
-       return new AppResponseDTO<>("Successfully registered");
+       return new AppResponseDTO<>(resourceService.getMessage("email.activation.link", lang));
 
     }
 
 
-    public String regVerification(String token) {
+    public String regVerification(String token, AppLanguage lang) {
 
         Integer profileId = JwtUtil.decodeRegVerToken(token);
 
         try {
 
-            ProfileEntity profile = profileService.getById(profileId);
+            ProfileEntity profile = profileService.getById(profileId, lang);
 
             if (profile.getStatus().equals(GeneralStatus.REGISTERING)){
                 profileRepository.updateStatus(profileId, GeneralStatus.ACTIVE);
-                return "Successfully verified";
+                return resourceService.getMessage("email.verification", lang);
             }
 
         }catch (JwtException ignored){
 
         }
-        throw new AppBadException("Verification failed");
+        throw new AppBadException(resourceService.getMessage("email.verification.failed", lang));
 
     }
 
 
-    public ProfileDTO login(AuthDTO dto) {
+    public ProfileDTO login(AuthDTO dto, AppLanguage lang) {
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
 
         if(optional.isEmpty()){
-            throw new AppBadException("Username or Password is incorrect");
+            throw new AppBadException(resourceService.getMessage("email.or.username.incorrect", lang));
         }
 
 
         if(!bCryptPasswordEncoder.matches(dto.password(),optional.get().getPassword())){
-            throw new AppBadException("Username or Password is incorrect");
+            throw new AppBadException(resourceService.getMessage("email.or.username.incorrect", lang));
         }
 
         if(!optional.get().getStatus().equals(GeneralStatus.ACTIVE)){
-            throw new AppBadException("User is not active");
+            throw new AppBadException(resourceService.getMessage("user.not.active", lang));
         }
 
         ProfileDTO response = new ProfileDTO();

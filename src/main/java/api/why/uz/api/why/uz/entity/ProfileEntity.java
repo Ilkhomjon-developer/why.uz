@@ -26,7 +26,6 @@ public class ProfileEntity {
     @Column(name = "password")
     private String password;
 
-
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private GeneralStatus status;
