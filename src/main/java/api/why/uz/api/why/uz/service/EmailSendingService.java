@@ -87,7 +87,7 @@ public class EmailSendingService {
     }
 
     @Async("emailExecutor")
-    public void sendEmail(String email, String subject, String body){
+    protected void sendEmail(String email, String subject, String body){
 
         MimeMessage msg = javaMailSender.createMimeMessage();
         try {
