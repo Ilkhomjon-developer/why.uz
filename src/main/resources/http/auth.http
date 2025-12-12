@@ -1,17 +1,25 @@
 ### Registration
 POST localhost:8080/auth/registration
 Content-Type: application/json
-Accept-Language: UZ
+Accept-Language: RU
 
 {
   "name": "Akromjonnn255",
-  "username": "maxamadqulovilkhomjon@gmail.com",
+  "username": "+998502229427",
   "password": "12345"
 }
 
 ### Registration Verification
-GET http://localhost:8080/auth/registration/verification/{profileId}
+GET http://localhost:8080/auth/registration/email-verification/{profileId}
+
+
+### Registration with sms
+POST https:// localhost:8080/auth/registration/sms-verification
 Accept-Language: UZ
+
+{
+    "phone": +998
+}
 
 ### Login
 POST localhost:8080/auth/login

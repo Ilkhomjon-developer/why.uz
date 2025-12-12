@@ -1,15 +1,15 @@
-package api.why.uz.api.why.uz.service;
+package api.why.uz.api.why.uz.service.mail;
 
 
+import api.why.uz.api.why.uz.enums.AppLanguage;
 import api.why.uz.api.why.uz.util.JwtUtil;
+import api.why.uz.api.why.uz.util.RandomNumberGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -26,7 +26,7 @@ public class EmailSendingService {
     @Value("${server.domain}")
     private String serverDomain;
 
-    public void sendRegistrationEmail(String email, Integer profileId){
+    public void sendRegistrationEmail(String email, Integer profileId, AppLanguage lang){
 
 
         String body = "<!DOCTYPE html>\n" +
@@ -55,7 +55,7 @@ public class EmailSendingService {
                 "                <!-- Button -->\n" +
                 "                <tr>\n" +
                 "                    <td align=\"center\" style=\"padding:35px 0;\">\n" +
-                "                        <a href=\"%s/auth/registration/verification/%s\" style=\"\n" +
+                "                        <a href=\"%s/auth/registration/email-verification/%s?lang=%s\" style=\"\n" +
                 "                                background: linear-gradient(90deg, #ff6b6b, #f06595);\n" +
                 "                                color:#ffffff;\n" +
                 "                                text-decoration:none;\n" +
@@ -80,13 +80,13 @@ public class EmailSendingService {
                 "</body>\n" +
                 "</html>\n";
 
-        body = String.format(body,serverDomain, JwtUtil.encode(profileId));
+        body = String.format(body,serverDomain, JwtUtil.encode(profileId), lang.name());
 
 
         sendEmail(email, "Registration confirmation", body);
     }
 
-    @Async("emailExecutor")
+
     protected void sendEmail(String email, String subject, String body){
 
         MimeMessage msg = javaMailSender.createMimeMessage();
@@ -107,6 +107,12 @@ public class EmailSendingService {
     }
 
 
+    public void sendResetPasswordEmail(String email, AppLanguage lang) {
+
+        int code = RandomNumberGenerator.generate();
+        String body = "Reset password code " + code;
+        sendEmail(email, "Reset password code", body);
+    }
 //         Simple mail sender
 //        SimpleMailMessage msg = new SimpleMailMessage();
 //        msg.setFrom(fromAccount);

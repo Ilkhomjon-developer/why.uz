@@ -1,4 +1,4 @@
-package api.why.uz.api.why.uz.dto;
+package api.why.uz.api.why.uz.dto.auth;
 
 
 import jakarta.validation.constraints.NotBlank;
