@@ -2,10 +2,12 @@ package api.why.uz.api.why.uz.service.mail;
 
 
 import api.why.uz.api.why.uz.enums.AppLanguage;
+import api.why.uz.api.why.uz.enums.SmsType;
 import api.why.uz.api.why.uz.util.JwtUtil;
 import api.why.uz.api.why.uz.util.RandomNumberGenerator;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,10 +17,11 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@RequiredArgsConstructor
 public class EmailSendingService {
 
-    @Autowired
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
+    private final SmsHistoryService smsHistoryService;
 
     @Value("${spring.mail.username}")
     private String fromAccount;
@@ -81,6 +84,67 @@ public class EmailSendingService {
                 "</html>\n";
 
         body = String.format(body,serverDomain, JwtUtil.encode(profileId), lang.name());
+
+
+        sendEmail(email, "Registration confirmation", body);
+    }
+
+    public void sendUpdateEmailCode(String email, int code, AppLanguage lang, SmsType smsType){
+
+
+        smsHistoryService.save(email, code, "Registration confirmation code", smsType);
+
+        String message = "Your verification code is: ";
+        String body = "<!DOCTYPE html>\n" +
+                "<html lang=\"en\">\n" +
+                "<head>\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>Registration Confirmation</title>\n" +
+                "</head>\n" +
+                "<body style=\"margin:0; padding:0; font-family:'Arial', sans-serif; background-color:#f0f2f5;\">\n" +
+                "<table width=\"100%%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">\n" +
+                "    <tr>\n" +
+                "        <td align=\"center\">\n" +
+                "            <!-- Main container -->\n" +
+                "            <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background: linear-gradient(135deg, #6a11cb, #2575fc); padding:40px; border-radius:20px; box-shadow:0 15px 50px rgba(0,0,0,0.3); color:#fff;\">\n" +
+                "\n" +
+                "                <!-- Header -->\n" +
+                "                <tr>\n" +
+                "                    <td align=\"center\">\n" +
+                "                        <h1 style=\"font-size:36px; margin-bottom:15px; font-weight:bold;\">Welcome to Our Service!</h1>\n" +
+                "                        <p style=\"font-size:18px; line-height:1.6; max-width:480px; margin:0 auto;\">\n" +
+                "                            Thank you for registering! Use the verification code below to activate your account.\n" +
+                "                        </p>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "\n" +
+                "                <!-- Verification Code -->\n" +
+                "                <tr>\n" +
+                "                    <td align=\"center\" style=\"padding:35px 0;\">\n" +
+                "                        <div style=\"\n" +
+                "                                background-color: rgba(255,255,255,0.2);\n" +
+                "                                color: #ffffff;\n" +
+                "                                font-size: 32px;\n" +
+                "                                font-weight: bold;\n" +
+                "                                padding: 20px 40px;\n" +
+                "                                border-radius: 12px;\n" +
+                "                                letter-spacing: 4px;\n" +
+                "                                display: inline-block;\n" +
+                "                            \">%d</div>\n" +
+                "                    </td>\n" +
+                "                </tr>\n" +
+                "\n" +
+                "            </table>\n" +
+                "        </td>\n" +
+                "    </tr>\n" +
+                "</table>\n" +
+                "</body>\n" +
+                "</html>";
+
+
+
+
+        body = String.format(body,code, lang.name());
 
 
         sendEmail(email, "Registration confirmation", body);

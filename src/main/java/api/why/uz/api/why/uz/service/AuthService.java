@@ -157,7 +157,7 @@ public class AuthService {
 
     }
 
-    public AppResponseDTO<ProfileDTO> resetPassword(ResetPasswordDTO dto, AppLanguage lang) {
+    public AppResponseDTO<String> resetPassword(ResetPasswordDTO dto, AppLanguage lang) {
 
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
 
@@ -177,8 +177,6 @@ public class AuthService {
             emailSendingService.sendResetPasswordEmail(dto.username(), lang);
 
         }
-
-
         return new AppResponseDTO(resourceService.getMessage("sms.activation.code", lang));
     }
 

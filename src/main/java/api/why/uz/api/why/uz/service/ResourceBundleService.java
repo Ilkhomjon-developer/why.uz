@@ -1,6 +1,7 @@
 package api.why.uz.api.why.uz.service;
 
 import api.why.uz.api.why.uz.enums.AppLanguage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
@@ -8,10 +9,10 @@ import org.springframework.stereotype.Service;
 import java.util.Locale;
 
 @Service
+@RequiredArgsConstructor
 public class ResourceBundleService {
 
-    @Autowired
-    private ResourceBundleMessageSource messageSource;
+    private final ResourceBundleMessageSource messageSource;
 
     public String getMessage(String code, AppLanguage lang){
 

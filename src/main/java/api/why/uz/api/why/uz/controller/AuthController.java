@@ -46,7 +46,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(dto, lang));
     }
 
-    public ResponseEntity<AppResponseDTO<ProfileDTO>> resetPassword(@RequestBody ResetPasswordDTO dto, @RequestHeader(value = "Accept-Language", defaultValue = "UZ") AppLanguage lang){
+    public ResponseEntity<AppResponseDTO<String>> resetPassword(@RequestBody ResetPasswordDTO dto, @RequestHeader(value = "Accept-Language", defaultValue = "UZ") AppLanguage lang){
 
         return ResponseEntity.ok(authService.resetPassword(dto, lang));
     }
