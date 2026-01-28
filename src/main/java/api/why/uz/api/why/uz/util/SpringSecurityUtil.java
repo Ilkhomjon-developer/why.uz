@@ -2,22 +2,30 @@ package api.why.uz.api.why.uz.util;
 
 import api.why.uz.api.why.uz.config.CustomUserDetails;
 import api.why.uz.api.why.uz.entity.ProfileEntity;
+import api.why.uz.api.why.uz.enums.ProfileRole;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.List;
 
 public class SpringSecurityUtil {
 
-
     public static CustomUserDetails getCurrentProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
-        return user;
+        return (CustomUserDetails) authentication.getPrincipal();
     }
 
     public static Integer getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails user = getCurrentProfile();
         return user.getId();
+    }
+
+    public static boolean hasRole(ProfileRole role){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals(role.name()));
     }
 
 }

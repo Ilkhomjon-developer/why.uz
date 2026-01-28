@@ -1,0 +1,8 @@
+
+### GET
+GET http://localhost:8080/attach/open/74cee640-7d29-45fa-80db-1bc57238e7c3.jpg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXhhbWFkcXVsb3ZpbGtob21qb25AZ21haWwuY29tIiwicm9sZXMiOiJST0xFX1VTRVIiLCJpZCI6Ijg3IiwidXNlcm5hbWUiOiJtYXhhbWFkcXVsb3ZpbGtob21qb25AZ21haWwuY29tIiwiaWF0IjoxNzY4MDM1MzU2LCJleHAiOjE3NjgwMzU2NTZ9.xXTIfJQax0wVeYBo0yJdGHRNCX1ixVXNP2BOnULEL5FfsuKM5E5DtWYbnGXiUvydB3bHPov0bNecaSQ__j9eNw
+
+### DOWNLOAD TEST
+GET http://localhost:8080/attach/download/19079cda-61f4-47fe-ab9d-b51cea697b63.jpg
+Authorization: Bearer {{jwt}}

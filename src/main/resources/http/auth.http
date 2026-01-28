@@ -28,5 +28,7 @@ Accept-Language: UZ
 
 {
   "username": "maxamadqulovilkhomjon@gmail.com",
-  "password": "12345"
+  "password": "7410"
 }
+
+> {% client.global.set("token", response.body.jwt); %}

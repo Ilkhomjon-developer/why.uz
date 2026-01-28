@@ -51,7 +51,8 @@ public class AuthService {
     private SmsSendingService smsSendingService;
     @Autowired
     private SmsHistoryService smsHistoryService;
-
+    @Autowired
+    private AttachService attachService;
 
 
     public AppResponseDTO<String> registration(RegistrationDTO dto, AppLanguage lang) {
@@ -181,12 +182,13 @@ public class AuthService {
     }
 
     private ProfileDTO getLogInResponse(Optional<ProfileEntity> optional) {
+        if (optional.isEmpty()) throw new RuntimeException("User not found");
         ProfileDTO response = new ProfileDTO();
         response.setName(optional.get().getName());
         response.setUsername(optional.get().getUsername());
         response.setRoleList(profileRoleRepository.getAllRolesListByProfileId(optional.get().getId()));
         response.setToken(JwtUtil.encode(optional.get().getUsername(), optional.get().getId(), response.getRoleList()));
-
+        response.setPhoto(attachService.attachDto(optional.get().getPhotoId()));
         return response;
     }
 }

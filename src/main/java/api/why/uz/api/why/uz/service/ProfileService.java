@@ -1,9 +1,6 @@
 package api.why.uz.api.why.uz.service;
 
-import api.why.uz.api.why.uz.dto.AppResponseDTO;
-import api.why.uz.api.why.uz.dto.UpdatePasswordDetailDTO;
-import api.why.uz.api.why.uz.dto.UpdateProfileDetailsDTO;
-import api.why.uz.api.why.uz.dto.UpdateProfileUsernameDTO;
+import api.why.uz.api.why.uz.dto.*;
 import api.why.uz.api.why.uz.entity.ProfileEntity;
 import api.why.uz.api.why.uz.enums.AppLanguage;
 import api.why.uz.api.why.uz.enums.SmsType;
@@ -62,5 +59,10 @@ public class ProfileService {
         emailSendingService.sendUpdateEmailCode(dto.username(), code,lang, SmsType.CHANGE_USERNAME_CONFIRMATION_CODE);
         smsHistoryService.save(dto.username(),code,"Change username confirmation code",SmsType.CHANGE_USERNAME_CONFIRMATION_CODE);
         return new AppResponseDTO<>(resourceService.getMessage("email.update.code.sent", lang)).getData();
+    }
+
+    public String updateProfilePhoto(@Valid UpdateProfilePhoto dto, AppLanguage lang) {
+        profileRepository.updatePhoto(SpringSecurityUtil.getCurrentUserId(), dto.photoId());
+        return new AppResponseDTO<>(resourceService.getMessage("photo.updated",lang)).getData();
     }
 }

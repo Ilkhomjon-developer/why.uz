@@ -14,4 +14,5 @@ public class ProfileDTO {
     private String username;
     private List<ProfileRole> roleList;
     private String token;
+    private AttachDTO photo;
 }
