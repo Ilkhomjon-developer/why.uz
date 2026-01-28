@@ -45,7 +45,7 @@ public class PostService {
     }
     public PostDTO updatePost(String id, PostCreateDTO dto) {
         PostEntity entity = getInfoById(id);
-        if(SpringSecurityUtil.hasRole(ProfileRole.ROLE_ADMIN) && !entity.getProfileId().equals(SpringSecurityUtil.getCurrentUserId())){
+        if(!SpringSecurityUtil.hasRole(ProfileRole.ROLE_ADMIN) && !entity.getProfileId().equals(SpringSecurityUtil.getCurrentUserId())){
             throw new RuntimeException("You can't edit this post");
         }
         String deletePhotoId = null;
@@ -71,7 +71,7 @@ public class PostService {
 
     public String deletePost(String id) {
         PostEntity entity = getInfoById(id);
-        if (SpringSecurityUtil.hasRole(ProfileRole.ROLE_ADMIN) && !entity.getProfileId().equals(SpringSecurityUtil.getCurrentUserId())) {
+        if (!SpringSecurityUtil.hasRole(ProfileRole.ROLE_ADMIN) && !entity.getProfileId().equals(SpringSecurityUtil.getCurrentUserId())) {
             throw new RuntimeException("You can't delete this post");
         }
         attachService.updateVisible(entity.getPhotoId());

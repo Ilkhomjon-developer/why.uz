@@ -20,7 +20,7 @@ public class SpringSecurityUtil {
     public static boolean hasRole(ProfileRole role){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream()
-                .noneMatch(authority -> authority.getAuthority().equals(role.name()));
+                .anyMatch(authority -> authority.getAuthority().equals(role.name()));
     }
 
 }
