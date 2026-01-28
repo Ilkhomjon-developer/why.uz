@@ -18,7 +18,7 @@ import api.why.uz.api.why.uz.service.mail.SmsSendingService;
 import api.why.uz.api.why.uz.util.JwtUtil;
 import api.why.uz.api.why.uz.util.UsernameValidation;
 import io.jsonwebtoken.JwtException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,49 +26,28 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private ProfileRepository profileRepository;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private ProfileRoleRepository profileRoleRepository;
-
-    @Autowired
-    private ProfileRoleService profileRoleService;
-
-    @Autowired
-    private ProfileService profileService;
-
-    @Autowired
-    private EmailSendingService emailSendingService;
-
-    @Autowired
-    private ResourceBundleService resourceService;
-    @Autowired
-    private SmsSendingService smsSendingService;
-    @Autowired
-    private SmsHistoryService smsHistoryService;
-    @Autowired
-    private AttachService attachService;
-
+    private final ProfileRepository profileRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ProfileRoleRepository profileRoleRepository;
+    private final ProfileRoleService profileRoleService;
+    private final ProfileService profileService;
+    private final EmailSendingService emailSendingService;
+    private final ResourceBundleService resourceService;
+    private final SmsSendingService smsSendingService;
+    private final SmsHistoryService smsHistoryService;
+    private final AttachService attachService;
 
     public AppResponseDTO<String> registration(RegistrationDTO dto, AppLanguage lang) {
-
        Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
-
        if(optional.isPresent()) {
            ProfileEntity profile = optional.get();
-
            if (profile.getStatus().equals(GeneralStatus.REGISTERING)){
-
                profileRoleService.deleteRole(profile.getId());
                profileRepository.delete(profile);
-
            }else {
-
                throw new AppBadException(resourceService.getMessage("email.phone.exists", lang));
            }
        }
@@ -83,102 +62,77 @@ public class AuthService {
        profileRepository.save(entity);
 
        profileRoleService.create(entity.getId(), ProfileRole.ROLE_USER);
-
        if(UsernameValidation.isPhone(dto.username())){
            smsSendingService.sendRegistrationSms(dto.username());
            return new AppResponseDTO<>(resourceService.getMessage("sms.activation.code", lang));
        } else if (UsernameValidation.isEmail(dto.username())) {
-
            emailSendingService.sendRegistrationEmail(dto.username(), entity.getId(), lang);
            return new AppResponseDTO<>(resourceService.getMessage("email.activation.link", lang));
        }
-
         throw new AppBadException(resourceService.getMessage("email.or.username.incorrect", lang));
     }
 
 
     public String registrationEmailVerification(String token, AppLanguage lang) {
-
         Integer profileId = JwtUtil.decodeRegVerToken(token);
-
         try {
-
             ProfileEntity profile = profileService.getById(profileId, lang);
-
             if (profile.getStatus().equals(GeneralStatus.REGISTERING)){
                 profileRepository.updateStatus(profileId, GeneralStatus.ACTIVE);
                 return resourceService.getMessage("email.verification", lang);
             }
-
         }catch (JwtException ignored){
 
         }
         throw new AppBadException(resourceService.getMessage("email.verification.failed", lang));
-
     }
 
 
     public ProfileDTO login(AuthDTO dto, AppLanguage lang) {
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
-
         if(optional.isEmpty()){
             throw new AppBadException(resourceService.getMessage("email.or.username.incorrect", lang));
         }
-
-
         if(!bCryptPasswordEncoder.matches(dto.password(),optional.get().getPassword())){
             throw new AppBadException(resourceService.getMessage("email.or.username.incorrect", lang));
         }
-
         if(!optional.get().getStatus().equals(GeneralStatus.ACTIVE)){
             throw new AppBadException(resourceService.getMessage("user.not.active", lang));
         }
-
         return getLogInResponse(optional);
     }
 
     public ProfileDTO registrationSmsVerification(SmsVerificationDTO dto, AppLanguage lang) {
-
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
-
         if (optional.isEmpty()) {
             throw new AppBadException(resourceService.getMessage("profile.not.found", lang));
         }
-
         if(!optional.get().getStatus().equals(GeneralStatus.REGISTERING)){
             throw new AppBadException(resourceService.getMessage("profile.in.wrong.state", lang));
         }
-
         if(UsernameValidation.isPhone(dto.username()) && smsHistoryService.isSmsSendToAccount(dto.username(), dto.code())){
 
             profileRepository.updateStatus(optional.get().getId(), GeneralStatus.ACTIVE);
             return getLogInResponse(optional);
         }
         throw new AppBadException( resourceService.getMessage("sms.verification.failed", lang));
-
     }
 
     public AppResponseDTO<String> resetPassword(ResetPasswordDTO dto, AppLanguage lang) {
-
         Optional<ProfileEntity> optional = profileRepository.findByUsernameAndVisibleTrue(dto.username());
-
         if(optional.isEmpty()){
             throw new AppBadException(resourceService.getMessage("profile.not.found", lang));
         }
         if(!optional.get().getStatus().equals(GeneralStatus.ACTIVE)){
             throw new AppBadException(resourceService.getMessage("profile.in.wrong.status", lang));
         }
-
-        ProfileEntity entity = optional.get();
         if(UsernameValidation.isPhone(dto.username())){
             smsSendingService.sendResetPasswordSms(dto.username(), lang);
 
         } else if (UsernameValidation.isEmail(dto.username())) {
-
             emailSendingService.sendResetPasswordEmail(dto.username(), lang);
-
         }
-        return new AppResponseDTO(resourceService.getMessage("sms.activation.code", lang));
+        return new AppResponseDTO<>(resourceService.getMessage("sms.activation.code", lang));
     }
 
     private ProfileDTO getLogInResponse(Optional<ProfileEntity> optional) {

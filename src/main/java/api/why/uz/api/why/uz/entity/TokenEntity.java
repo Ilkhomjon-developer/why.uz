@@ -20,7 +20,6 @@ public class TokenEntity {
     @Column(name = "token", length = 500)
     private String token;
 
-
     @Column(name = "created_date")
     @CreationTimestamp
     private LocalDateTime createDate;

@@ -17,7 +17,7 @@ public class AppConfig {
         resourceBundleMessageSource.setDefaultEncoding("UTF-8");
         resourceBundleMessageSource.setDefaultLocale(Locale.of("uz"));
         return resourceBundleMessageSource;
-    };
+    }
 
     @Bean
     public RestTemplate restTemplate(){

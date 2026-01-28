@@ -4,7 +4,7 @@ import api.why.uz.api.why.uz.dto.sms.SmsProviderTokenDTO;
 import api.why.uz.api.why.uz.dto.sms.SmsTokenProviderResponse;
 import api.why.uz.api.why.uz.entity.TokenEntity;
 import api.why.uz.api.why.uz.repository.mail.TokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
@@ -16,45 +16,32 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TokenService {
 
-    @Autowired
-    private TokenRepository tokenRepository;
-
-    @Autowired
-    private RestTemplate restTemplate;
+    private final TokenRepository tokenRepository;
+    private final RestTemplate restTemplate;
 
     @Value("${eskiz.sms.email}")
     private String email;
     @Value("${eskiz.sms.password}")
     private String password;
 
-    private String urlToCreateToken = "http://notify.eskiz.uz/api/auth/login";
-    private String urlToRefreshToken = "http://notify.eskiz.uz/api/auth/refresh";
-
     public String getToken() {
-
         Optional<TokenEntity> optional = tokenRepository.findTopByOrderByCreatedDateDesc();
-
         if(optional.isPresent()){
-
             LocalDateTime tokenCreatedDate = optional.get().getCreateDate();
             LocalDateTime now = LocalDateTime.now();
             long days = Duration.between(tokenCreatedDate, now).toDaysPart();
-
             if(days >= 30){
                createToken();
             }else if(days == 29){
-                refreshToken(optional.get().getToken());
-            }else{
-                 optional.get().getToken();
+                return refreshToken(optional.get().getToken());
+            }else {
+                return optional.get().getToken();
             }
         }
-
-
-
         return createToken();
-
     }
 
     private String createToken() {
@@ -64,40 +51,42 @@ public class TokenService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
 
+        String urlToCreateToken = "https://notify.eskiz.uz/api/auth/login";
         RequestEntity<SmsProviderTokenDTO> request = RequestEntity
                 .post(urlToCreateToken)
                 .headers(headers)
                 .body(smsProviderTokenDTO);
 
         var response = restTemplate.exchange(request, SmsTokenProviderResponse.class);
-
+        if (response.getBody() == null) {
+            throw new IllegalStateException("Response body is null in TokenService");
+        }
         String token = response.getBody().getData().getToken();
-
         TokenEntity entity = new TokenEntity();
         entity.setToken(token);
-
         tokenRepository.save(entity);
-
         return token;
-
     }
+
     private String refreshToken(String oldToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + oldToken);
         headers.set("Content-Type", "application/json");
 
+        String urlToRefreshToken = "https://notify.eskiz.uz/api/auth/refresh";
         RequestEntity<Void> request = RequestEntity
                 .patch(urlToRefreshToken)
                 .headers(headers)
                 .build();
 
         var response = restTemplate.exchange(request, SmsTokenProviderResponse.class);
-        String newToken = response.getBody().getData().getToken();
-
+        if (response.getBody() == null) {
+            throw new IllegalStateException("Response body is null in TokenService");
+        }
+        String token = response.getBody().getData().getToken();
         TokenEntity entity = new TokenEntity();
-        entity.setToken(newToken);
+        entity.setToken(token);
         tokenRepository.save(entity);
-
-        return newToken;
+        return token;
     }
 }

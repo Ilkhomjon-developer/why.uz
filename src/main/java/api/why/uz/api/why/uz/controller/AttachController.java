@@ -24,12 +24,12 @@ public class AttachController {
     }
 
     @GetMapping("/open/{id:.+}")
-    public ResponseEntity<Resource> open(@PathVariable("id") String id){
+    public ResponseEntity<Resource> open(@PathVariable String id){
         return attachService.open(id);
     }
 
     @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> download(@PathVariable("id") String id){
+    public ResponseEntity<Resource> download(@PathVariable String id){
         return attachService.download(id);
     }
 

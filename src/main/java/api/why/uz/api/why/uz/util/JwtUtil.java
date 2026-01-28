@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class JwtUtil {
 
     private static final int tokenLiveTime = 5 * 60 * 10000; // 5-minutes
-    private static final String secretKey = "veryLongSecretmazgillattayevlasharaaxmojonjinnijonsurbetbekkiydirhonuxlatdibekloxovdangasabekochkozjonduxovmashaynikmaydagapchishularnioqiganbolsangizgapyoqaniqsizmazgi";
+    private static final String secretKey = "veryLongSecretMazgiLlattayevlasharaaxmojonjinnijonsurbetbekkiydirhonuxlatdibekloxovdangasabekochkozjonduxovmashaynikmaydagapchishularnioqiganbolsangizgapyoqaniqsizmazgi";
 
 
     public static String encode(String username,Integer id, List<ProfileRole> roleList) {

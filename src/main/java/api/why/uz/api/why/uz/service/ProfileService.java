@@ -8,7 +8,6 @@ import api.why.uz.api.why.uz.exps.AppBadException;
 import api.why.uz.api.why.uz.repository.ProfileRepository;
 import api.why.uz.api.why.uz.service.mail.EmailSendingService;
 import api.why.uz.api.why.uz.service.mail.SmsHistoryService;
-import api.why.uz.api.why.uz.service.mail.SmsSendingService;
 import api.why.uz.api.why.uz.util.RandomNumberGenerator;
 import api.why.uz.api.why.uz.util.SpringSecurityUtil;
 import jakarta.validation.Valid;

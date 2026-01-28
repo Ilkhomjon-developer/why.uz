@@ -15,13 +15,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Getter
     private Integer id;
-
     @Getter
     private String name;
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> authorities;
-    private GeneralStatus status;
+    private final String username;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> authorities;
+    private final GeneralStatus status;
 
     public CustomUserDetails(ProfileEntity profile, List<ProfileRole> role) {
         this.id = profile.getId();

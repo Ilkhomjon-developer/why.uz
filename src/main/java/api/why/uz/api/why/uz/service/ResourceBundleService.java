@@ -2,7 +2,6 @@ package api.why.uz.api.why.uz.service;
 
 import api.why.uz.api.why.uz.enums.AppLanguage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +14,6 @@ public class ResourceBundleService {
     private final ResourceBundleMessageSource messageSource;
 
     public String getMessage(String code, AppLanguage lang){
-
         return messageSource.getMessage(code, null,Locale.forLanguageTag(lang.name()));
     }
 }

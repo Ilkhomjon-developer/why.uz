@@ -2,8 +2,11 @@ package api.why.uz.api.why.uz.controller;
 
 import api.why.uz.api.why.uz.dto.post.PostCreateDTO;
 import api.why.uz.api.why.uz.dto.post.PostDTO;
+import api.why.uz.api.why.uz.dto.post.PostFilterDTO;
+import api.why.uz.api.why.uz.dto.post.SimilarPostListDTO;
 import api.why.uz.api.why.uz.service.PostService;
 import api.why.uz.api.why.uz.util.PageUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
@@ -46,5 +49,15 @@ public class PostController {
     @PutMapping("/delete-post/{id}")
     public ResponseEntity<String> deletePost(@PathVariable String id){
         return ResponseEntity.ok(postService.deletePost(id));
+    }
+
+    @PostMapping("/similar-posts")
+    public ResponseEntity<List<PostDTO>> getSimilarPostList(@Valid @RequestBody SimilarPostListDTO dto){
+        return ResponseEntity.ok(postService.getSimilarPostList(dto));
+    }
+
+    @PostMapping("/search-posts")
+    public ResponseEntity<PageImpl<PostDTO>> searchPosts(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "9") int size, @RequestBody PostFilterDTO dto){
+        return ResponseEntity.ok(postService.searchPosts(page, size, dto));
     }
 }

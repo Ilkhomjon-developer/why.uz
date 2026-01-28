@@ -5,7 +5,6 @@
     import api.why.uz.api.why.uz.service.ProfileService;
     import jakarta.validation.Valid;
     import lombok.RequiredArgsConstructor;
-    import org.springframework.http.MediaType;
     import org.springframework.http.ResponseEntity;
     import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +14,6 @@
     public class ProfileController {
 
         private final ProfileService profileService;
-
 
         @PutMapping("/update-profile-name")
         public ResponseEntity<AppResponseDTO<String>> updateProfile(@Valid @RequestBody UpdateProfileDetailsDTO dto, @RequestHeader(value = "Accept-Language", defaultValue = "UZ") AppLanguage lang){

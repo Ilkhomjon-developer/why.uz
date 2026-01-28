@@ -4,7 +4,6 @@ package api.why.uz.api.why.uz.service;
 import api.why.uz.api.why.uz.dto.AttachDTO;
 import api.why.uz.api.why.uz.entity.AttachEntity;
 import api.why.uz.api.why.uz.repository.AttachRepository;
-import api.why.uz.api.why.uz.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -38,28 +37,24 @@ public class AttachService {
     @Value("${attach.upload.url}")
     private  String attachUrl;
 
-    private final ProfileRepository profileRepository;
 
     public AttachDTO uploadFile(MultipartFile file) {
 
         try {
-
             String pathFolder = getYmDString();
             String key = UUID.randomUUID().toString();
             String extension = Objects.requireNonNull(file.getOriginalFilename())
                     .substring(file.getOriginalFilename().lastIndexOf(".") + 1);
 
             File folder = new File(attachDir + pathFolder);
-
             if (!folder.exists()) {
-
-                boolean mkdirs = folder.mkdirs();
+                boolean mkDirs = folder.mkdirs();
+                if (!mkDirs) {
+                    throw new RuntimeException("Could not create folder");
+                }
             }
-
             byte[] bytes = file.getBytes();
-
             Path path = Paths.get(attachDir + pathFolder + "/" + key + "." + extension);
-
             Files.write(path, bytes);
 
             AttachEntity entity = new AttachEntity();
@@ -89,7 +84,6 @@ public class AttachService {
             AttachEntity entity = getEntity(id);
             Path filePath = Paths.get(attachDir + entity.getPath() + "/" + id).normalize();
             Resource resource = new UrlResource(filePath.toUri());
-
             if (resource.exists() || resource.isReadable()) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.APPLICATION_OCTET_STREAM)
@@ -98,7 +92,6 @@ public class AttachService {
             } else {
                 throw new RuntimeException("File not found");
             }
-
         } catch (MalformedURLException e) {
             throw new RuntimeException("Could not read file");
         }
@@ -107,10 +100,8 @@ public class AttachService {
     public ResponseEntity<Resource> open(String id) {
         AttachEntity entity = getEntity(id);
         Path filePath = Paths.get(attachDir + entity.getPath() + "/" + id).normalize();
-        Resource resource = null;
-
         try {
-            resource = new UrlResource(filePath.toUri());
+            Resource  resource = new UrlResource(filePath.toUri());
             if (!resource.exists()) {
                 throw new RuntimeException("File not found");
             }
@@ -122,7 +113,6 @@ public class AttachService {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
     }
 
     private String getYmDString() {
@@ -133,9 +123,7 @@ public class AttachService {
     }
 
     private AttachEntity getEntity(String id) {
-
         Optional<AttachEntity> optional = attachRepository.findById(id);
-
         if (optional.isEmpty()) {
             throw new RuntimeException("File not found");
         }
@@ -156,7 +144,6 @@ public class AttachService {
         AttachDTO dto = new AttachDTO();
         dto.setId(photoId);
         dto.setUrl(attachUrl + "/open/" + photoId);
-
         return dto;
     }
 

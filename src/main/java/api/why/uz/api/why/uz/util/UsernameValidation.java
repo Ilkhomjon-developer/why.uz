@@ -7,7 +7,7 @@ public class UsernameValidation {
     }
 
     public static boolean isPhone(String username) {
-        // O'zbekiston raqami
+        // Phone number Uzb
         return username.matches("^\\+998\\d{9}$");
     }
 }
