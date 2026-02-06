@@ -58,6 +58,6 @@ public class PostController {
 
     @PostMapping("/search-posts")
     public ResponseEntity<PageImpl<PostDTO>> searchPosts(@RequestParam(value = "page", defaultValue = "1") int page, @RequestParam(value = "size", defaultValue = "9") int size, @RequestBody PostFilterDTO dto){
-        return ResponseEntity.ok(postService.searchPosts(page, size, dto));
+        return ResponseEntity.ok(postService.searchPosts(PageUtil.page(page), size, dto));
     }
 }

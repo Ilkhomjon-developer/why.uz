@@ -1,6 +1,8 @@
 package api.why.uz.api.why.uz.util;
 
-public class PhoneUtil {
+public final class PhoneUtil {
+
+    private PhoneUtil() {}
 
     public static String toLocalPhone(String phone) {
         if (phone == null) {

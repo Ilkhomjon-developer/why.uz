@@ -78,6 +78,7 @@ public class PostService {
         postRepository.updateVisible(id);
         return "Successfully deleted";
     }
+
     public PageImpl<PostDTO> getAll(int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<PostEntity> entityList = postRepository.getAllPosts(pageRequest);
@@ -91,7 +92,7 @@ public class PostService {
     }
     public PageImpl<PostDTO> searchPosts(int page, int size, PostFilterDTO dto) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<PostEntity> entityList = postRepository.searchPost(pageRequest, dto.str());
+        Page<PostEntity> entityList = postRepository.searchPost(dto.query(), pageRequest);
         List<PostDTO> dtoList = entityList.getContent().stream().map(this::getPostDTO).toList();
         return new PageImpl<>(dtoList, pageRequest, entityList.getTotalElements());
     }

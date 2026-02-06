@@ -1,6 +1,8 @@
 package api.why.uz.api.why.uz.util;
 
-public class UsernameValidation {
+public final class UsernameValidation {
+
+    private UsernameValidation(){}
 
     public static boolean isEmail(String username){
         return username.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");

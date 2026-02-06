@@ -5,7 +5,9 @@ import api.why.uz.api.why.uz.enums.ProfileRole;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-public class SpringSecurityUtil {
+public final class SpringSecurityUtil {
+
+    private SpringSecurityUtil() {}
 
     public static CustomUserDetails getCurrentProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -2,9 +2,11 @@ package api.why.uz.api.why.uz.util;
 
 import java.util.Random;
 
-public class RandomNumberGenerator {
+public final class RandomNumberGenerator {
 
     private static final Random random = new Random();
+
+    private RandomNumberGenerator(){}
 
     public static int generate(){
 

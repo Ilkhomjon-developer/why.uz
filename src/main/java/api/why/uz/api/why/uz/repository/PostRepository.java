@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface PostRepository extends CrudRepository<PostEntity, String>, PagingAndSortingRepository<PostEntity, String> {
 
-    @Query("SELECT p from PostEntity p where p.id = ?1 and p.visible = true order by p.createdDate desc ")
+    @Query("SELECT p from PostEntity p where p.profileId = ?1 and p.visible = true order by p.createdDate desc ")
     Page<PostEntity> findAllByProfileId(Integer profileId, Pageable pageable);
 
     @Modifying
@@ -31,11 +31,6 @@ public interface PostRepository extends CrudRepository<PostEntity, String>, Pagi
     @Query("SELECT p from PostEntity p where p.id <> ?1 and p.visible = true order by p.createdDate desc limit 3")
     List<PostEntity> findNPosts(String s);
 
-    @Query("""
-       SELECT p FROM PostEntity p
-       WHERE LOWER(p.title) LIKE LOWER(CONCAT('%', :str, '%'))
-       AND p.visible = true
-       ORDER BY p.createdDate DESC
-       """)
-    Page<PostEntity> searchPost(Pageable pageable, @Param("str") String str);
+    @Query("SELECT p FROM PostEntity p WHERE p.title LIKE CONCAT('%', :str, '%') AND p.visible = true ORDER BY p.createdDate DESC")
+    Page<PostEntity> searchPost(@Param("str") String str, Pageable pageable);
 }

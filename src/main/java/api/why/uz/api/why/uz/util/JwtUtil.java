@@ -11,13 +11,14 @@ import javax.crypto.SecretKey;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class JwtUtil {
+public final class JwtUtil {
 
     private static final int tokenLiveTime = 5 * 60 * 10000; // 5-minutes
     private static final String secretKey = "veryLongSecretMazgiLlattayevlasharaaxmojonjinnijonsurbetbekkiydirhonuxlatdibekloxovdangasabekochkozjonduxovmashaynikmaydagapchishularnioqiganbolsangizgapyoqaniqsizmazgi";
 
+    private JwtUtil() {}
 
-    public static String encode(String username,Integer id, List<ProfileRole> roleList) {
+    public static String encode(String username, Integer id, List<ProfileRole> roleList) {
 
         String strRoles = roleList.stream().map(Enum::name).collect(Collectors.joining(","));
 

@@ -29,7 +29,8 @@ public class SpringConfig {
             "/attach/**",
             "/post/public-posts/**",
             "/post/similar-posts",
-            "/post/public/*"
+            "/post/public/*",
+            "/post/search-posts/**",
     };
 
     @Bean
